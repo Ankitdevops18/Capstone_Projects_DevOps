@@ -1,0 +1,53 @@
+---
+- name: Install Docker, CRI-Docker, and Kubernetes
+  hosts: worker_nodes
+  become: yes
+
+  tasks:
+    - name: Install Docker
+      shell: |
+        wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installDocker.sh -P /tmp
+        chmod 755 /tmp/installDocker.sh
+        bash /tmp/installDocker.sh
+      register: docker_output
+
+    - name: Restart Docker service
+      systemd:
+        name: docker
+        state: restarted
+      when: docker_output is changed
+
+    - name: Install CRI-Docker
+      shell: |
+        wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installCRIDockerd.sh -P /tmp
+        chmod 755 /tmp/installCRIDockerd.sh
+        bash /tmp/installCRIDockerd.sh
+      register: cri_docker_output
+
+    - name: Restart cri-docker service
+      systemd:
+        name: cri-docker
+        state: restarted
+      when: cri_docker_output is changed
+
+    - name: Install kubeadm, kubelet, kubectl
+      shell: |
+        wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S.sh -P /tmp
+        chmod 755 /tmp/installK8S.sh
+        bash /tmp/installK8S.sh
+
+    - name: Validate installed versions
+      shell:
+        cmd: "{{ item }}"
+      loop:
+        - docker -v
+        - cri-dockerd --version
+        - kubeadm version -o short
+        - kubelet --version
+        - kubectl version --client
+      register: versions_validation
+
+    - name: Display Versions of all the softwares installed
+      debug:
+        var: versions_validation
+

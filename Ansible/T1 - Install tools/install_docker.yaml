@@ -1,7 +1,7 @@
 ---
 
 - name: Install docker
-  hosts: worker_nodes
+  hosts: master_server
   become: yes
   tasks:
     - name: Install aptitude
