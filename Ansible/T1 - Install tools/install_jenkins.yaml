@@ -1,13 +1,31 @@
 ---
 
 - name: install jenkins
-  hosts: local
+  hosts: localhost
+  connection: local
   become: yes
   tasks:
     - name: Update apt package index
       apt:
         update_cache: yes
-    - name: Install Java & Jenkins
-      apt:
-        name: jenkins
+
+    - name: Install Tomcat
+      package:
+        name: tomcat
         state: present
+
+    - name: Ensure Tomcat service is enabled and started
+      service:
+        name: tomcat
+        state: started
+        enabled: yes
+
+    - name: Download Jenkins WAR file
+      get_url:
+        url: https://get.jenkins.io/war-stable/latest/jenkins.war
+        dest: /var/lib/tomcat/webapps/jenkins.war
+
+    - name: Restart Tomcat service
+      service:
+        name: tomcat
+        state: restarted

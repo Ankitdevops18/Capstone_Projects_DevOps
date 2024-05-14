@@ -1,0 +1,47 @@
+---
+
+- name: Install kubernetes
+  hosts: worker_nodes
+  become: yes
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+    - name: run apt-get update
+      apt:
+       update_cache: yes
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: latest
+        update_cache: true
+
+    - name:  Download the public signing key for the Kubernetes package repositories. 
+      shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add the appropriate Kubernetes apt repository.
+      shell: echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+    - name: run apt-get update
+      apt:
+       update_cache: yes
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - kubelet  
+          - kubeadm
+          - kubectl
+        state: present
+        update_cache: true
+
+    - name: Add the appropriate Kubernetes apt repository.
+      shell: sudo apt-mark hold kubelet kubeadm kubectl
+
+
