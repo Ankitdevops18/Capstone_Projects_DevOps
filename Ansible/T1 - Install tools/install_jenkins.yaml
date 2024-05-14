@@ -18,11 +18,16 @@
         src: /opt/apache-tomcat-9.0.54.tar.gz
         dest: /opt/
         remote_src: yes
+
+    - name: Rename Tomcat directory
+      command: mv /opt/apache-tomcat-9.0.54 /opt/tomcat
+      args:
+        creates: /opt/tomcat  
   
     - name: Download Jenkins WAR file
       get_url:
         url: https://get.jenkins.io/war-stable/latest/jenkins.war
-        dest: /opt/apache-tomcat-9.0.54/webapps/jenkins.war
+        dest: /opt/tomcat/webapps/jenkins.war
 
     - name: Ensure Tomcat service is enabled and started
-      shell: /opt/apache-tomcat-9.0.54/bin/startup.sh
+      shell: /opt/tomcat/bin/startup.sh
