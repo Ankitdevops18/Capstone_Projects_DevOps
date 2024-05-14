@@ -18,11 +18,7 @@
         src: /opt/apache-tomcat-9.0.54.tar.gz
         dest: /opt/
         remote_src: yes
-    - name: Configure Tomcat Users
-      template:
-        src: tomcat-users.xml.j2
-        dest: /opt/apache-tomcat-9.0.54/conf/tomcat-users.xml
-        
+              
     - name: Ensure Tomcat service is enabled and started
       service:
         name: tomcat
