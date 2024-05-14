@@ -1,0 +1,13 @@
+---
+
+- name: Install docker
+  hosts: worker_nodes
+  become: yes
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present

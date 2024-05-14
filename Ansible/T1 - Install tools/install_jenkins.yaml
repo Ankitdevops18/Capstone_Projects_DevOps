@@ -1,0 +1,13 @@
+---
+
+- name: install jenkins
+  hosts: local
+  become: yes
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+    - name: Install Java & Jenkins
+      apt:
+        name: jenkins
+        state: present
