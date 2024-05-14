@@ -18,19 +18,11 @@
         src: /opt/apache-tomcat-9.0.54.tar.gz
         dest: /opt/
         remote_src: yes
-              
-    - name: Ensure Tomcat service is enabled and started
-      service:
-        name: tomcat
-        state: started
-        enabled: yes
-
-    - name: Download Jenkins WAR file
+  
+      - name: Download Jenkins WAR file
       get_url:
         url: https://get.jenkins.io/war-stable/latest/jenkins.war
-        dest: /var/lib/tomcat/webapps/jenkins.war
+        dest: /opt/apache-tomcat-9.0.54/webapps/jenkins.war
 
-    - name: Restart Tomcat service
-      service:
-        name: tomcat
-        state: restarted
+    - name: Ensure Tomcat service is enabled and started
+      shell: /opt/apache-tomcat-9.0.54/bin/startup.sh
