@@ -1,6 +1,6 @@
 ---
 - name: Install Docker, CRI-Docker, and Kubernetes
-  hosts: worker_nodes
+  hosts: complete
   become: yes
 
   tasks:
