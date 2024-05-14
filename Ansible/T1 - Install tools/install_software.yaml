@@ -1,0 +1,27 @@
+---
+- name: Install necessary software
+  hosts: master_server
+  become: yes
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+    - name: Install Java & Jenkins
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - java
+        - jenkins
+
+- name: Install necessary software
+  hosts: worker_nodes
+  become: yes
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
