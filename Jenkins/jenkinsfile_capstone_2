@@ -1,0 +1,31 @@
+   pipeline {
+       agent any
+    triggers {
+        cron('H H 25 * *') // Trigger job on the 25th of every month
+    }
+       stages {
+           stage('Build') {
+               steps {
+                   // Clone the repository
+                   git 'https://github.com/Ankitdevops18/capstone_1_website.git'
+                   // Build Docker image
+                   sh '''
+                    docker build -t docker.io/ankitofficial1821/intellipaat_2023:my_webapp .
+                    docker push docker.io/ankitofficial1821/intellipaat_2023:my_webapp
+                   '''
+
+                
+               }
+           }
+           stage('Deploy') {
+               steps {
+                   // Run tests on Docker image
+                   sh '''
+                   scp *.yaml ubuntu@100.26.214.200:/tmp/
+                   ssh ubuntu@100.26.214.200 'cd /tmp && sudo kubectl apply -f deployment.yaml && sudo kubectl apply -f service.yaml'
+
+                   '''
+               }
+           }
+       }
+   }
