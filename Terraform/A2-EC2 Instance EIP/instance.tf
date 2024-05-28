@@ -11,7 +11,7 @@ resource "aws_instance" "asignmnt2-inst" {
 }
 
 resource "aws_eip" "a2_eip" {
-  instance         = aws_instance.asignmnt2-inst
+  instance         = aws_instance.asignmnt2-inst.id
 
   tags = {
     Name = "Assignment2-EIP"
