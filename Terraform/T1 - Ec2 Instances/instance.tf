@@ -6,6 +6,6 @@ resource "aws_instance" "worker_node" {
 
 
   tags = {
-    Name = "Worker-Node-${count.index}"
+    Name = "Worker-Node-${count.index + 1}"
   }
 }
