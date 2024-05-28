@@ -102,14 +102,14 @@ resource "aws_security_group" "example_sg" {
 resource "aws_network_interface" "ni-subnet1" {
     subnet_id = aws_subnet.example_subnet1.id
     private_ips = ["10.0.1.10"]
-    security_groups = [aws_security_group.example_sg.name]
+    security_groups = [aws_security_group.example_sg.id]
 }
 
 # Creating a new network interface
 resource "aws_network_interface" "ni-subnet2" {
     subnet_id = aws_subnet.example_subnet2.id
     private_ips = ["10.0.2.10"]
-    security_groups = [aws_security_group.example_sg.name]
+    security_groups = [aws_security_group.example_sg.id]
 }
 
 # EC2 Instance in Subnet 1
