@@ -98,12 +98,28 @@ resource "aws_security_group" "example_sg" {
   }
 }
 
+# Creating a new network interface
+resource "aws_network_interface" "ni-subnet1" {
+    subnet_id = aws_subnet.example_subnet1.id
+    private_ips = ["10.0.1.10"]
+    security_groups = [aws_security_group.example_sg.name]
+}
+
+# Creating a new network interface
+resource "aws_network_interface" "ni-subnet2" {
+    subnet_id = aws_subnet.example_subnet2.id
+    private_ips = ["10.0.2.10"]
+    security_groups = [aws_security_group.example_sg.name]
+}
 
 # EC2 Instance in Subnet 1
 resource "aws_instance" "example_instance1" {
   ami           = "ami-04b70fa74e45c3917"  # Replace with a valid Ubuntu AMI ID
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.example_subnet1.id
+  network_interface {
+        device_index = 0
+        network_interface_id = aws_network_interface.ni-subnet1.id
+    }
   security_groups = [aws_security_group.example_sg.name]
 
   user_data = file("install_apache.sh")  # Run the Apache installation script
@@ -117,7 +133,10 @@ resource "aws_instance" "example_instance1" {
 resource "aws_instance" "example_instance2" {
   ami           = "ami-04b70fa74e45c3917"  # Replace with a valid Ubuntu AMI ID
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.example_subnet2.id
+  network_interface {
+        device_index = 0
+        network_interface_id = aws_network_interface.ni-subnet2.id
+    }
   security_groups = [aws_security_group.example_sg.name]
 
   user_data = file("install_apache.sh")  # Run the Apache installation script
