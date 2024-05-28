@@ -120,7 +120,6 @@ resource "aws_instance" "example_instance1" {
         device_index = 0
         network_interface_id = aws_network_interface.ni-subnet1.id
     }
-  security_groups = [aws_security_group.example_sg.name]
 
   user_data = file("install_apache.sh")  # Run the Apache installation script
 
@@ -137,7 +136,6 @@ resource "aws_instance" "example_instance2" {
         device_index = 0
         network_interface_id = aws_network_interface.ni-subnet2.id
     }
-  security_groups = [aws_security_group.example_sg.name]
 
   user_data = file("install_apache.sh")  # Run the Apache installation script
 
