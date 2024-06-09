@@ -8,7 +8,7 @@
                steps {
                    // Clone the repository
                    git 'https://github.com/Ankitdevops18/capstone_1_website.git'
-                   // Build Docker image
+                   // Build & push Docker image
                    sh '''
                     docker build -t docker.io/ankitofficial1821/intellipaat_2023:my_webapp .
                     docker push docker.io/ankitofficial1821/intellipaat_2023:my_webapp
@@ -19,7 +19,7 @@
            }
            stage('Deploy') {
                steps {
-                   // Run tests on Docker image
+                // pull K8s manifest files with the updated image & deploy the cluster
                    sh '''
                    scp *.yaml ubuntu@100.26.214.200:/tmp/
                    ssh ubuntu@100.26.214.200 'cd /tmp && sudo kubectl apply -f deployment.yaml && sudo kubectl apply -f service.yaml'
