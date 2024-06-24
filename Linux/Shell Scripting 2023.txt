@@ -17,7 +17,8 @@ $?
 The $? variable represents the exit status of the previous command. Exit status is a numerical value returned by every command upon its completion. 
 As a rule, most commands return an exit status of 0 if they were successful, and 1 if they were unsuccessful.
 
-
+$!
+The $? variable represents the PID of the previous command.
 
 
 ************************************************************* Assigning ssh command output ot a variable ********************************************************************
@@ -67,17 +68,58 @@ List Content of tar Archive File in Linux
 
 ************************************************************** find **************************************************************
 
+Finds any file in the mentioned path
 
-
-
+find . -name "file_name"
 
 ************************************************************** sed **************************************************************
+
+Replaces strings in the file
+
+sed -i 's/old_string/new_string/g' filename
+
+Here:
+
+-i stands for "in-place" editing, meaning the file will be modified directly.
+s/old_string/new_string/g is the sed substitution command:
+s stands for substitute.
+old_string is the string you want to replace.
+new_string is the string you want to replace old_string with.
+g stands for "global," meaning all instances of old_string in the file will be replaced.
+
+Examples: 
+sed -i -e "s/ue00/ue01/g" file_path
+sed -i -e 's/'"\b${FROM}\b"'/'"${TO}"'/g' ${F}
+
+
+Inside a VIM Editor : 
+
+:%s/old_string/new_string/g
+
+Explanation
+: - Enter command-line mode.
+% - Specifies the range. % means the entire file.
+s - The substitute command.
+old_string - The string you want to replace.
+new_string - The string you want to replace old_string with.
+g - Globally replace all instances in each line (without this, only the first instance in each line would be replaced).
+
 
 
 
 
 ************************************************************** cut **************************************************************
 
+cut -d ":" -f 1
+
+d stands for delimitter
+f stands for feild no.
+
+Cutting the string with delimitter as : & giving the field no 1 as output
+
+So if below is the string: 
+A:b
+Output would be - A
 
 
 ************************************************************** split  **************************************************************
