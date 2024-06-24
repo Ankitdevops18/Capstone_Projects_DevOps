@@ -1,0 +1,322 @@
+******************************************************************** Get Started with Git ******************************************************************
+
+You have an empty repository
+To get started you will need to run these commands in your terminal.
+
+New to Git? Learn the basic Git commands
+Configure Git for the first time
+git config --global user.name "Ankit Solanki"
+git config --global user.email "asolanki@bjs.com"
+Working with your repository
+I just want to clone this repository
+If you want to simply clone this empty repository then run this command in your terminal.
+
+git clone ssh://git@bitbucket.bjs.com:7999/oms/oms_15feb.git
+My code is ready to be pushed
+If you already have code ready to be pushed to this repository then run this in your terminal.
+
+cd existing-project
+git init
+git add --all
+git commit -m "Initial Commit"
+git remote add origin ssh://git@bitbucket.bjs.com:7999/oms/oms_15feb.git
+git push -u origin HEAD:master
+My code is already tracked by Git
+If your code is already tracked by Git then set this repository as your "origin" to push to.
+
+cd existing-project
+git remote set-url origin ssh://git@bitbucket.bjs.com:7999/oms/oms_15feb.git
+git push -u origin --all
+git push origin --tags
+
+
+******************************************************************** Git for B&DAuto app  ******************************************************************
+
+
+$ history 50
+    1  cd /c/Users/asolanki/Desktop/Learnings/Build_Automation/RepoClone
+    2  cd C:/Users/asolanki/Desktop/Learnings/Build_Automation/RepoCLone/bd_automation
+    3  git init
+   		4  git clone https://bitbucket.bjs.com/scm/bdaut/bd_automation.git
+    		5  git clone https://bitbucket.bjs.com/scm/bdaut/bd_automation.git
+    		6  git clone https://asolanki@bitbucket.bjs.com/scm/bdaut/bd_automation.git
+    		7  git clone https://bitbucket.bjs.com/scm/bdaut/bd_automation.git
+    8  git config --global user.name "Solanki, Ankit"
+    9  git config --global user.email "asolanki@bjs.com"
+   10  git clone https://bitbucket.bjs.com/scm/bdaut/bd_automation.git
+   		11  git status
+   		12  git add -all
+   		13  git add all
+   		14  git add --all
+   		15  git status
+   		16  ls -lrt
+   17  cd bd_automation
+   18  git status
+   19  git checkout sprint-FY22-1
+   20  git status
+   		21  git commit -m "FrontEnd change to sync with backend "
+   22  git add --all
+   23  git status
+   24  git commit -m "FrontEnd change to sync with backend "
+   		25  git remote add origin https://asolanki@bitbucket.bjs.com/scm/bdaut/bd_automation.git
+   		6  git remote add origin https://bitbucket.bjs.com/scm/bdaut/bd_automation.git
+   27  git push
+
+
+
+Process to push code
+
+1. Git Checkout 
+2. Git fetch - fetch changes 
+3. Git pull - pull changes
+4. Make change & Git add
+4. Git commit
+
+
+   30  git fetch
+   31  git add --all
+   32  git status
+   33  git commit -m 'Build & Deployment status from request flow & home page route both updated '
+   34  git status
+   35  git pull
+   36  git status
+   37  git push
+   38  git status
+   39  git status
+   40  git add -all
+   41  git add _-all
+   42  git add --all
+   43  git commit -m 'All static images pushed'
+   44  git push
+   
+   
+******************************************************************** Restoring Repo back up from Bitbucket Dev  ******************************************************************
+
+
+
+git clone <backup repo from bitbucketdev>
+
+for remote in `git branch -r | grep -v master `; do git checkout --track $remote ; done  ##checkouts all branches in back up repo 
+
+git push --mirror <new-remote-url>
+
+
+git push --mirror https://bitbucket.bjs.com/scm/oms/ops-app-backup-15thfeb23.git
+
+Troubleshotting >> 
+Error >> 
+git clone <backup repo from bitbucketdev> ## If its a large Repo , gives below error 
+Cloning into 'large-repository'...
+remote: Counting objects: 20248, done.
+remote: Compressing objects: 100% (10204/10204), done.
+error: RPC failed; curl 18 transfer closed with outstanding read data remaining 
+fatal: The remote end hung up unexpectedly
+fatal: early EOF
+fatal: index-pack failed
+
+Resolution >> 
+git config --global http.postBuffer 524288000
+
+
+History 50 
+
+  133  mkdir OMS_15Feb
+  134  git clone https://bitbucketdev.bjs.com/scm/oms1/omstest.git
+  135  ls -lrt
+  136  cd OMS_15Feb
+  137  ls -lrt
+  138  git clone https://bitbucketdev.bjs.com/scm/oms1/omstest.git
+  139  git clone https://bitbucketdev.bjs.com/scm/oms1/omstest.git --depth 1
+  140  git fetch --unshallow
+  141  ls -lrt
+  142  cd omstest
+  143  git fetch --unshallow
+  144  git fetch --unshallow
+  145  git fetch --depth=100
+  146  git config --global http.postBuffer 524288000
+  147  git fetch --unshallow
+  148  git checkout feature/ Sprint-FedEx
+  149  git checkout feature/Sprint-FedEx
+  150  git checkout feature/Sprint-FedEx
+  151  cd ..
+  152  cd ..
+  153  cd -
+  154  ls -lrt
+  155  cd ..
+  156  mkdir OMSTest
+  157  cd OMSTest
+  158  git clone https://bitbucketdev.bjs.com/scm/oms1/omstest.git
+  159  ls -lrt
+  160  cd omstest
+  161  git checkout feature/Sprint-FedEx
+  162  git status
+  163  git remote add origin ssh://git@bitbucket.bjs.com:7999/oms/oms_15feb.git
+  164  git remote set origin ssh://git@bitbucket.bjs.com:7999/oms/oms_15feb.git
+  165  git remote set-url origin ssh://git@bitbucket.bjs.com:7999/oms/oms_15feb.git
+  166  git status
+  167  git checkout master
+  168  git add -all
+  169  git add --all
+  170  git status
+  171  git push
+  172  git remote -v
+  173  git push -u origin --all
+  174  git push -u origin --all
+  175  git remote set-url origin https://bitbucket.bjs.com/scm/oms/oms_15feb.git
+  176  git remote -v
+  177  git push -u origin --all
+  178  git push origin --tags
+  179  git push origin '*:*'
+  180  git push origin --all
+  181  git push REMOTE --tags
+  182  git push origin --tags
+  183  git checkout weeklyRelDF-7422
+  184  git push origin --all
+  185  git push origin '*:*'
+  186  git push origin --mirror
+  187  git checkout master
+  188  git push origin --mirror
+  189  cd ..
+  190  cd ..
+  191  mkdir OMSTest2
+  192  cd OMSTest2
+  193  git clone https://bitbucketdev.bjs.com/scm/oms1/omstest.git
+  194  ls -lrt
+  195  cd omstest
+  196  git push --mirror https://bitbucket.bjs.com/scm/oms/oms_150223.git
+  197  git remote -v
+  198  for remote in `git branch -r | grep -v master `; do git checkout --track $remote ; done
+  199  git remote -v
+  200  git push --mirror https://bitbucket.bjs.com/scm/oms/oms_150223.git
+  201  history 100
+  
+
+******************************************************************** Remote URL   ******************************************************************
+
+
+To push all your branches, use either (replace REMOTE with the name of the remote, for example "origin"):
+
+git push REMOTE '*:*'
+git push REMOTE --all
+To push all your tags:
+
+git push REMOTE --tags
+Finally, I think you can do this all in one command with:
+
+git push REMOTE --mirror
+
+
+
+List your existing remotes in order to get the name of the remote you want to change.
+$ git remote -v
+> origin  git@github.com:USERNAME/REPOSITORY.git (fetch)
+> origin  git@github.com:USERNAME/REPOSITORY.git (push)
+Change your remote's URL from SSH to HTTPS with the git remote set-url command.
+$ git remote set-url origin https://github.com/USERNAME/REPOSITORY.git
+
+The git remote add command takes two arguments:
+
+A remote name, for example, origin
+A remote URL, for example, https://github.com/user/repo.git
+For example:
+
+$ git remote add origin https://github.com/USER/REPO.git
+# Set a new remote
+
+$ git remote -v
+# Verify new remote
+> origin  https://github.com/USER/REPO.git (fetch)
+> origin  https://github.com/USER/REPO.git (push)
+
+
+##################################### If the file  has already been deleted from your repository and you are still encountering the error ##########################################
+
+ If the file Learnings/Learnings.180523.zip has already been deleted from your repository and you are still encountering the error, it's possible that the file is still present in your Git history.
+
+To completely remove the file from your Git history, you can use the following steps:
+
+Start by creating a backup of your repository to ensure you don't lose any important data.
+
+Use the git filter-branch command with the --index-filter option to remove the file from the entire Git history. Run the following command:
+
+css
+Copy code
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch Learnings/Learnings.180523.zip' --prune-empty HEAD
+This command will remove the file Learnings/Learnings.180523.zip from all commits in your Git history.
+
+Once the filtering process completes, the file should be removed from your Git history. Verify that the file no longer exists in your repository or in any of its commits.
+
+Force push your changes to the remote repository using the following command:
+
+css
+Copy code
+git push origin --force --all
+Please exercise caution when using the --force option, as it will overwrite the remote repository's history.
+
+After completing these steps, the file Learnings/Learnings.180523.zip should be completely removed from your Git history, and you should be able to push your changes without encountering the file size limit error.
+
+
+
+
+
+User
+$ git filter-branch --index-filter 'git rm --cached --ignore-unmatch Learnings/Learnings.180523.zip' --prune-empty HEAD
+WARNING: git-filter-branch has a glut of gotchas generating mangled history
+         rewrites.  Hit Ctrl-C before proceeding to abort, then use an
+         alternative filtering tool such as 'git filter-repo'
+         (https://github.com/newren/git-filter-repo/) instead.  See the
+         filter-branch manual page for more details; to squelch this warning,
+         set FILTER_BRANCH_SQUELCH_WARNING=1.
+Proceeding with filter-branch...
+
+Cannot create a new backup.
+A previous backup already exists in refs/original/
+Force overwriting the backup with -f
+ChatGPT
+
+2 / 2
+
+It seems that a previous backup of your repository's original state already exists in the refs/original/ directory. Before proceeding with the filter-branch command, you can force overwrite the backup by adding the -f flag. Here's the modified command:
+
+
+git filter-branch -f --index-filter 'git rm --cached --ignore-unmatch Learnings/Learnings.180523.zip' --prune-empty HEAD
+By using the -f flag, you indicate that you want to overwrite the existing backup and proceed with the filter-branch operation.
+
+Please note that the filter-branch command can have unintended consequences and is considered a risky operation. It's always recommended to create a backup of your repository before performing such operations.
+
+
+
+git filter-branch -f --index-filter 'git rm --cached --ignore-unmatch Learnings/Learnings.180523.zip' --prune-empty HEAD
+
+
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch Learnings/Learnings.180523.zip' --prune-empty HEAD
+
+
+git filter-branch --tree-filter 'rm -f .terraform/providers/registry.terraform.io/hashicorp/aws/4.67.0/windows_amd64/terraform-provider-aws_v4.67.0_x5.exe' --prune-empty HEAD
+
+
+git rm -r --cached .
+git add .
+
+
+################################################ Already added the large files to the .gitignore file ###################################
+
+If you have already added the large files to the .gitignore file and are still encountering the error, it's possible that the large files were previously committed and are still present in your Git history. The .gitignore file only affects untracked files, not files that have already been committed.
+
+To completely remove the large files from your Git history, you can use the following steps:
+
+Start by creating a backup of your repository to ensure you don't lose any important data.
+
+Remove the large files from your local Git repository. You can use the git filter-branch command with the --tree-filter option to remove the files. For example, to remove the file .terraform/providers/registry.terraform.io/hashicorp/aws/4.67.0/windows_amd64/terraform-provider-aws_v4.67.0_x5.exe, you can run the following command:
+
+
+
+
+git filter-branch --tree-filter 'rm -f .terraform/providers/registry.terraform.io/hashicorp/aws/4.67.0/windows_amd64/terraform-provider-aws_v4.67.0_x5.exe' --prune-empty HEAD
+git push origin --force --all
+
+Replace the file path with the appropriate path to the large file you want to remove.
+
+Once the filtering process completes, the large files should be removed from your local Git history. Verify that the files no longer exist in your repository.
+
+Force push your changes to the remote repository using the following command:

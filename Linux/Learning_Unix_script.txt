@@ -1,0 +1,275 @@
+1. Here Document (EOT)
+
+
+cat something <<EOT
+something else
+EOT
+
+
+EOT : End Of Transmission
+
+
+A here document is nothing but I/O redirection that tells the bash shell to read input from the current source
+until a line containing only delimiter is seen.
+
+
+
+for eg. 
+
+ftp -inv $host << FTP ## start of label, below command will be treated as ftp command not the shell commans
+user $user $passwd
+bin
+put $file
+bye
+FTP # end of ftp commands
+
+
+2  !/bin/bash 
+
+A script may specify #!/bin/bash on the first line,
+meaning that the script should always be run with bash, rather than another shell.
+
+
+
+3. Using a bamboo variable
+
+- syntax ${variable}
+- eg : ${bamboo_buildNumber}
+
+a. injecting a task variable 
+
+syntax:  bamboo.inject.{variable}
+eg : project_label=${bamboo.inject.project.label}
+primaryagent=${bamboo.inject.primaryagent}
+
+b. injecting a plan variable or a bamboo variable
+
+sybtax  bamboo_{plan_variable}
+
+eg :  zip -r ${bamboo_OMSWorkingDirectory}_${bamboo_buildNumber}.zip
+cd ${bamboo_build_working_directory}
+
+
+c. injecting variable while loogging into a server 
+
+project_label=${bamboo.inject.project.label}
+build_target=${bamboo.inject.build.target}
+environment=${bamboo.inject.environment}
+DATE=`date '+%Y%m%d %H'`
+date_tr=$(echo $DATE | tr -d " ")
+
+ssh strlgadm@${primaryagent} "/bin/bash -s $environment $project_label $build_target $bamboo_OMSWorkingDirectory $bamboo_buildNumber $date_tr"<<'EOT'
+    mkdir -p /opt/Sterling/projects/BJs/Source/${2}.${6}/workspace
+    cd /opt/Sterling/projects/BJs/Source/${2}.${6}/workspace
+    rm -rf BJSSourcecode
+    unzip ${4}_${5}.zip
+    rm -f ${4}_${5}.zip
+EOT
+
+
+4. ssh login 
+
+eg : ssh strlgadm@Ue00omsatr01 /bin/bash<<'EOT'
+commands
+EOT
+
+
+5. scp command 
+
+scp source_directory username@server_name:destination_directory
+
+
+eg : 
+scp ${bamboo_OMSWorkingDirectory}_${bamboo_buildNumber}.zip strlgadm@${primaryagent}:/opt/Sterling/projects/BJs/Source/$project_label.$date_tr/workspace
+
+
+6 Cron triggers 
+
+
+A cron expression is a string comprised of six or seven fields separated by white space. Fields can contain any of the allowed values, along with various combinations of the allowed special characters for that field. Cron expressions can be as simple as * * * * ? * or as complex as 0/5 14,18,3-39,52 * ? JAN,MAR,SEP MON-FRI 2002-2010.
+
+Fields can contain any of the allowed values alone with various combinations of the allowed special characters for that field.
+
+Cron Expresson Format
+
+Field Name	Allowed Value	Allowed Special Characters
+
+Seconds	            0-59	, - * /
+Minutes		    0-59	, - * /
+Hours		    0-23	, - * /
+Day-of-Month	    1-31	, - * ? / L W
+Month		1-12 or JAN-DEC	, - * /
+Day-of-Week	1-7 or SUN-SAT	, - * ? / L #
+Year (Optional)	empty, 1970-2199	, - * /
+
+Cron Expression Reference
+
+*	Asterisks indicate that the cron expression matches for all values of the field. For example, "*" in the minute field means every minute.
+?	Question marks are used to specify 'no specific value' and is allowed for the day-of-month and day-of-week fields. It is used instead of the asterisk (*) 
+        for leaving either day-of-month or day-of-week blank.
+-	Hyphens are used to define ranges. For example, "10-12" in the hour field means the hours of 10, 11, and 12.
+,	Commas are used to separate items of a list. For example, "MON,WED,FRI" in the day-of-week field means the days Monday, Wednesday, and Friday.
+/	Forward slash are used to indicate increments. For example. "0/15" in the seconds field means the seconds 0, 15, 30, and 45. 
+        Additionally, "1/3" in the day-of-month field means every 3 days starting on the first day of the month.
+L	Short-hand for "last" and is allowed for the day-of-month and day-of-week fields. The "L" character has a different meaning in each of the two fields. For example, "L" in the day-of-month field means the last day of the month. If used in the day-of-week field, it means 7 or SAT. However, if used in the day-of-week field after another value, it means the last xxx day of the month. For example, "6L" in the day-of-week field means the last Friday of the month.
+W	Short-hand for "weekday" and is allowed for the day-of-month field. The "W" character is used to specify the weekday nearest the given day. For example, "15W" in the day-of-month field means the nearest weekday to the 15th of the month. Therefore, if the 15th is a Saturday, the job runs on Friday the 14th. The "L" and "W" characters can be combined in the day-of-month field. For example, "LW" means the last weekday of the month.
+#	Hash marks specify constructs. For example, "6#3' in the day-of-week field means the third Friday of the month.
+
+
+
+
+7 Test connections 
+
+ssh strlgadm@Ue00omsatr01 /bin/bash<<'EOT'
+echo "in Ue00omsatr01"
+EOT
+
+
+
+8. Running a script 
+
+syntax:  ./${script_name}
+eg :   cd /opt/OMS_scripts &&
+./archiveEar.sh 
+
+eg: 
+ssh strlgadm@${agent2} "/bin/bash"<<'EOT'
+cd /opt/OMS_scripts &&
+./archiveEar.sh
+EOT
+echo "Ear backup done in ${agent2}"
+
+
+
+
+9 Bamboo working directory 
+
+/apps/atlassian/bamboo603/xml-data/build-dir/{build-ID}
+
+eg : /apps/atlassian/bamboo603/xml-data/build-dir/51052545/32505860-39419993  
+
+/apps/atlassian/bamboo603/xml-data/build-dir/51052545/DGT-WCS8PLAN213-BUIL/WebSphereCommerce/workspace
+
+
+10. &&
+
+used to run the command ahead it only whne previous command is successful
+
+11  & 
+to run script in background
+
+
+12 nohup 
+
+Nohup is short for “No Hangups.” It’s not a command that you run by itself. Nohup is a supplemental command that tells the
+Linux system not to stop another command once it has started. That means it’ll keep running until it’s done, 
+even if the user that started it logs out. The syntax for nohup is simple and looks something like this:
+
+nohup sh your-script.sh &
+Notice the “&” at the end of the command. That moves the command to the background, freeing up the terminal that you’re working in
+
+
+
+13. if..else..fi
+
+
+if [ expression ]
+then
+   Statement(s) to be executed if expression is true
+else
+   Statement(s) to be executed if expression is not true
+fi
+
+
+
+eg: 
+
+
+if($(tail -f ${AgentBuildLogFile} |grep -m 1 "BUILD SUCCESSFUL" | xargs echo "" >> ${AgentBuildLogFile} \;))
+then
+echo "Build successful in ${element} ***"
+else
+echo "Build failed in ${element}...."
+allAgentBuildpassed=false
+fi
+
+
+
+14: Cases
+
+The case statement saves going through a whole set of if .. then .. else statements. Its syntax is really quite simple:
+talk.sh
+#!/bin/sh
+
+echo "Please talk to me ..."
+while :
+do
+  read INPUT_STRING
+  case $INPUT_STRING in
+	hello)
+		echo "Hello yourself!"
+		;;
+	bye)
+		echo "See you again!"
+		break
+		;;
+	*)
+		echo "Sorry, I don't understand"
+		;;
+  esac
+done
+echo 
+echo "That's all folks!"
+
+
+Okay, so it's not the best conversationalist in the world; it's only an example!
+Try running it and check how it works...
+
+$ ./talk.sh
+Please talk to me ...
+hello
+Hello yourself!
+What do you think of politics?
+Sorry, I don't understand
+bye
+See you again!
+
+That's all folks!
+
+
+$ The syntax is quite simple: 
+The case line itself is always of the same format, and it means that we are testing the value of the variable INPUT_STRING.
+
+The options we understand are then listed and followed by a right bracket, as hello) and bye). 
+This means that if INPUT_STRING matches hello then that section of code is executed, up to the double semicolon.
+
+ 
+
+If INPUT_STRING matches bye then the goodbye message is printed and the loop exits. Note that if we wanted to exit the script completely then we would use the command exit instead of break. 
+The third option here, the *), is the default catch-all condition; it is not required, but is often useful for debugging purposes even if we think we know what values the test variable will have.
+
+The whole case statement is ended with esac (case backwards!) then we end the while loop with a done.
+
+
+15  For loop
+
+for i in 1 2 3 4 5
+do
+  echo "Looping ... number $i"
+done
+
+NOte : done is used to end loops
+
+
+16 While..do loop
+
+
+INPUT_STRING=hello
+while [ "$INPUT_STRING" != "bye" ]
+do
+  echo "Please type something in (bye to quit)"
+  read INPUT_STRING
+  echo "You typed: $INPUT_STRING"
+done
+
+

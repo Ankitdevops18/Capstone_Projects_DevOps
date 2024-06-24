@@ -1,0 +1,251 @@
+****************************************************************  Using Script Arguments *****************************************************************
+Linux Scripting - Basic Commands 
+
+$0 - The name of the script. 
+$1 - The first argument sent to the script. 
+$2 - The second argument sent to the script.
+$3 - The third argument... and so forth.
+
+***************************************************** Dirname ****************************************************************************
+Dirname - 
+Dirname is a built-in command on Linux and Unix-like OSes; it is used to identify paths in shell scripts. 
+Simply, dirname will remove the last part of a filename, after the last forward-slash (/), and 
+print the remaining command as the name of the directory where that file is saved.
+
+************************************************************ Getting exit status of previous command *********************************************************************
+$?
+The $? variable represents the exit status of the previous command. Exit status is a numerical value returned by every command upon its completion. 
+As a rule, most commands return an exit status of 0 if they were successful, and 1 if they were unsuccessful.
+
+
+
+
+************************************************************* Assigning ssh command output ot a variable ********************************************************************
+variable_name=$(command)
+************************************************************* AWK ********************************************************************
+
+. AWK Operations: 
+(a) Scans a file line by line 
+(b) Splits each input line into fields 
+(c) Compares input line/fields to pattern 
+(d) Performs action(s) on matched lines
+
+awk options 'selection _criteria {action }' input-file > output-file
+https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
+
+
+
+awk '/manager/ {print}' employee.txt 
+awk '{print}' employee.txt
+
+$ awk '{print NR,$0}' employee.txt 
+Output:  
+
+1 ajay manager account 45000
+2 sunil clerk account 25000
+3 varun manager sales 50000
+4 amit manager account 47000
+5 tarun peon sales 15000
+
+
+
+$ awk 'NR==3, NR==6 {print NR,$0}' employee.txt 
+Output:  
+
+3 varun manager sales 50000
+4 amit manager account 47000
+5 tarun peon sales 15000
+6 deepak clerk sales 23000
+
+********************************************************* Getting a file in local with SSH ************************************************************************
+
+This example will make a local copy of a remote /etc/passwd file to /tmp/passwd:
+$ ssh user@username '( cat /etc/passwd )' > /tmp/passwd
+
+In this example we make a bzip2 local copy of the remote server’s /var/log/auth.log file to a local file in the /tmp/ directory:
+$ ssh user@hostname '( cp /var/log/auth.log /tmp/; cd /tmp/ && tar -jcvf - auth.log )' > /tmp/auth.tar.bz2
+
+https://linuxconfig.org/executing-commands-remotely-with-ssh-and-output-redirection
+
+
+********************************************************Assigning SSH output to variable *************************************************************************
+
+x=$(ssh -o StrictHostKeyChecking=no root@hostname 'x=10; echo $x')
+
+************************************************************** Tar *******************************************************************
+
+Tar:
+
+tar -cvf tecmint-14-09-12.tar /home/tecmint/
+tar cvzf MyImages-14-09-12.tar.gz /home/MyImages
+tar cvfj Phpfiles-org.tar.bz2 /home/php
+tar -xvf public_html-14-09-12.tar
+## Untar files in specified Directory ##
+# tar -xvf public_html-14-09-12.tar -C /home/public_html/videos/
+
+List Content of tar Archive File in Linux
+# tar -tvf uploadprogress.tar
+
+
+
+************************************************************** find **************************************************************
+
+
+
+
+
+************************************************************** sed **************************************************************
+
+
+
+
+************************************************************** cut **************************************************************
+
+
+************************************************************** grep ************************************************************** 
+
+
+grep -Rl "13053" *
+
+
+***************************************************************** Connecting to DB   *****************************************************************
+
+Note : Keep file in /wcsetxracts/bin First.
+
+
+
+binDir=/wcsextracts/bin
+. ${binDir}/setEnv.sh
+
+# log beginning of script
+app_start_log
+
+echo "Establish the DB2 environment"
+# Establish the DB2 environment:
+if [ -f /db2home/db2inst1/sqllib/db2profile ]; then
+    . /db2home/db2inst1/sqllib/db2profile
+else
+   echo "Severe Error - db2profile not found!!!.  exiting..."
+   exit -1
+fi
+#About to connect to database
+app_log "About to connect to database"
+db2 connect to $DBNAME user $DB2USER using $DB2PASS
+RC=$?
+if [  $RC -eq 0 ]; then
+        app_log "Successfully connected to the database"
+else
+ app_log "Failed to connect to the database"
+         exit 1
+fi
+
+
+
+echo "$(db2 -x "SELECT ATTRVALUE FROM XSTOREATTR WHERE ATTRNAME = 'killSwitchSDD' AND STORE_ID = 10201")"
+
+RC=$?
+if [ $RC -eq 0 ]; then
+        app_log "OOS_INDEX_THRESHOLD Hours fetched from XSTOREATTR = ${OOS_INDEX_THRESHOLD}"
+else
+ app_log "OOS_INDEX_THRESHOLD Hours fetch from XSTOREATTR unsuccessful"
+ send_email "Job ${JOB_NAME}/Script `basename $0` has completed in failure. File Base Product. Failed to extract data." "Job ${JOB_NAME} failed!" $ERROR_EMAIL_RECIPIENT
+        exit 1
+fi
+
+db2 -x "SELECT ATTRVALUE FROM XSTOREATTR WHERE ATTRNAME = 'killSwitchSDD' AND STORE_ID = 10201"
+
+*********************************************************Sampls Script Created to move files ************************************************************************
+
+if [ "${bamboo_InputEnv}" = "qa" ]; then
+      wcsserver="ue00comapq02"
+      xpayserver="ue00xpybaq01"
+      user="wcsadm"
+      echo "Request to move files from  $wcsserver to $xpayserver with $user user"
+
+elif [ "${bamboo_InputEnv}" = "prod" ]; then
+        wcsserver="ue00comapp01"
+        xpayserver="ue00xpybap01"
+        user="wcextrac"
+        echo "Request to move files from  $wcsserver to $xpayserver with $user user"
+
+else
+        echo "Wrong choice of Environment, write either qa  or prod"
+
+fi
+
+
+echo "Getting the count of files present in WCS Server $wcsserver"
+
+
+
+
+RC=$(ssh ${user}@${wcsserver} 'cd /wcsextracts/extracts/ADSData; ls -lrt ADS_Export_*.csv|wc -l')
+
+#RC=$(ssh wcsadm@ue00comapq02 '/wcsextracts/bin/ADSDataCheck.sh')
+
+echo " $RC files exist in the directory"
+
+if [ "${RC}" -gt "0" ]; then
+    echo "Moving  Files"
+    ssh ${user}@${wcsserver} '( tar -cvf - /wcsextracts/extracts/ADSData )' > ADSData.tar
+    tar -xvf ADSData.tar 
+    cd wcsextracts/extracts/ADSData/
+    scp ADS_Export_*.csv xpybatch@${xpayserver}:/digital-batch-data/secured/${bamboo_InputEnv}/incoming/wcs/
+    #cd ../../..
+    cd ${bamboo.build.working.directory}  
+    echo "$(pwd)"
+    echo "$(ls -lrt)"
+    rm ADSData.tar
+    rm -rf wcsextracts
+    ssh ${user}@${wcsserver} 'mv /wcsextracts/extracts/ADSData/ADS_Export_*.csv /wcsextracts/extracts/archive/ADSDataArchive/'
+    echo "Files Moved to Xpay Server & also archived in WCS "
+else 
+    echo "No Files to Move"
+fi
+
+*********************************************************Sampls Script Created to Restart Services  ************************************************************************
+
+
+
+
+if [ "${bamboo_EnvName}" = "qa1" ]; then
+      server="ue00optbaq01"
+      path="/optical-batch/opticalOMS/qa1/"
+      echo "Request to restart batch server in $server from path $path"
+
+elif [ "${bamboo_EnvName}" = "qa2" ]; then
+        server= "ue00optbaq01"
+        path= "/optical-batch/opticalOMS/qa2/"
+        echo "Request to restart batch server in $server from path $path"
+        
+elif [ "${bamboo_EnvName}" = "prod" ]; then
+        server="ue00optbap01"
+        path="/optical-batch/opticalOMS/"
+        echo "Request to restart batch server in $server from path $path"
+        
+else
+        echo "Wrong choice of Environment, write either Qa1, Qa2  or Prod"
+
+fi
+
+
+echo "Logging into the server $server"
+
+ssh optbatch@${server} "/bin/bash -s $path" << 'EOT'
+cd ${1}
+echo "Path changed to ${1} , Running the restart script"
+./optical-batch-start.sh
+
+cd /opt/app/data/logs
+
+filename=$(ls -lrt | grep "batch-server*" | tail -1 | awk '{print $NF}')
+
+echo "The Log file name is $filename"
+pwd
+sleep 30s
+echo "Waiting for 30 seconds"
+
+cat ${filename} | tail -100;
+
+echo "Please find above the top 100 logs from $filename "
+EOT

@@ -1,0 +1,33 @@
+#!/bin/bash
+#This is for Non Prod SDD KillSwitch update in XSTOREATTR Table
+
+##Initialize variables
+ATTRNAME=${bamboo.attrname}
+ATTRVALUE=${bamboo.attrvalue}
+Input_Env=${bamboo.InputEnv}
+user="wcsadm"
+
+if [ ${Input_Env}=="qa1live"]; then
+    $dbname="wcstst1"
+    $server="ue00comdbq01"
+    
+elif [ ${Input_Env}=="qa1stage"]; then
+    $dbname="wcstst1"
+    $server="ue00comdbs01"
+elif [ ${Input_Env}=="qa4live"]; then
+    $dbname="wcstst4"
+    $server="ue00comdbq04"
+else
+    echo "Wrong environment selection, write the environment name with type - live or stage eg : qa1live"
+fi
+
+#Run query
+
+ssh -q $user@$server '/bin/bash -s $ATTRNAME $ATTRVALUE $dbname ' << 'EOT'
+
+    . /db2home/db2inst1/sqllib/db2profile
+    db2 connect to $3
+    #db2 -x " UPDATE XSTOREATTR SET ATTRVALUE = $2 WHERE ATTRNAME = $1 AND STORE_ID = 10201"
+    db2 -x " SELECT * FROM XSTOREATTR WHERE ATTRVALUE = $2 AND STORE_ID = 10201"
+
+EOT

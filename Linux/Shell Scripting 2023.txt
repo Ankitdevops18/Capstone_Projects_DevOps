@@ -1,0 +1,299 @@
+****************************************************************  Using Script Arguments *****************************************************************
+Linux Scripting - Basic Commands 
+
+$0 - The name of the script. 
+$1 - The first argument sent to the script. 
+$2 - The second argument sent to the script.
+$3 - The third argument... and so forth.
+
+***************************************************** Dirname ****************************************************************************
+Dirname - 
+Dirname is a built-in command on Linux and Unix-like OSes; it is used to identify paths in shell scripts. 
+Simply, dirname will remove the last part of a filename, after the last forward-slash (/), and 
+print the remaining command as the name of the directory where that file is saved.
+
+************************************************************ Getting exit status of previous command *********************************************************************
+$?
+The $? variable represents the exit status of the previous command. Exit status is a numerical value returned by every command upon its completion. 
+As a rule, most commands return an exit status of 0 if they were successful, and 1 if they were unsuccessful.
+
+
+
+
+************************************************************* Assigning ssh command output ot a variable ********************************************************************
+variable_name=$(command)
+************************************************************* AWK ********************************************************************
+
+. AWK Operations: 
+(a) Scans a file line by line 
+(b) Splits each input line into fields 
+(c) Compares input line/fields to pattern 
+(d) Performs action(s) on matched lines
+
+awk options 'selection _criteria {action }' input-file > output-file
+https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
+
+
+********************************************************* Getting a file in local with SSH ************************************************************************
+
+This example will make a local copy of a remote /etc/passwd file to /tmp/passwd:
+$ ssh user@username '( cat /etc/passwd )' > /tmp/passwd
+
+In this example we make a bzip2 local copy of the remote server’s /var/log/auth.log file to a local file in the /tmp/ directory:
+$ ssh user@hostname '( cp /var/log/auth.log /tmp/; cd /tmp/ && tar -jcvf - auth.log )' > /tmp/auth.tar.bz2
+
+https://linuxconfig.org/executing-commands-remotely-with-ssh-and-output-redirection
+
+
+********************************************************Assigning SSH output to variable *************************************************************************
+
+x=$(ssh -o StrictHostKeyChecking=no root@hostname 'x=10; echo $x')
+
+************************************************************** Tar *******************************************************************
+
+Tar:
+
+tar -cvf tecmint-14-09-12.tar /home/tecmint/
+tar cvzf MyImages-14-09-12.tar.gz /home/MyImages
+tar cvfj Phpfiles-org.tar.bz2 /home/php
+tar -xvf public_html-14-09-12.tar
+## Untar files in specified Directory ##
+# tar -xvf public_html-14-09-12.tar -C /home/public_html/videos/
+
+List Content of tar Archive File in Linux
+# tar -tvf uploadprogress.tar
+
+
+
+************************************************************** find **************************************************************
+
+
+
+
+
+************************************************************** sed **************************************************************
+
+
+
+
+************************************************************** cut **************************************************************
+
+
+
+************************************************************** split  **************************************************************
+
+Split command in Linux is used to split large files into smaller files. It splits the files into 1000 lines per file(by default) and 
+even allows users to change the number of lines as per requirement.
+
+The names of the files are PREFIXaa, PREFIXab, PREFIXac, and so on. By default the PREFIX of files name is x and the default size of 
+each split file is 1000 lines per file and both the parameters can be changed with ease. 
+
+1. Split file into short files. Assume a file name with name index.txt. Use below split command to break it into pieces.
+
+split index.txt
+2. Split file based on number of lines.
+
+split -l 4 index.txt split_file
+
+5. Change in suffix length. By default, the suffix length is 2. We can also change it using ‘-a’ option.
+
+split -l 4 -a 4 index.txt
+
+
+************************************************************** grep ************************************************************** 
+
+
+grep -Rl "13053" *
+
+
+
+*********************************************************Sampls Script Created to move files ************************************************************************
+
+if [ "${bamboo_InputEnv}" = "qa" ]; then
+      wcsserver="ue00comapq02"
+      xpayserver="ue00xpybaq01"
+      user="wcsadm"
+      echo "Request to move files from  $wcsserver to $xpayserver with $user user"
+
+elif [ "${bamboo_InputEnv}" = "prod" ]; then
+        wcsserver="ue00comapp01"
+        xpayserver="ue00xpybap01"
+        user="wcextrac"
+        echo "Request to move files from  $wcsserver to $xpayserver with $user user"
+
+else
+        echo "Wrong choice of Environment, write either qa  or prod"
+
+fi
+
+
+echo "Getting the count of files present in WCS Server $wcsserver"
+
+
+
+
+RC=$(ssh ${user}@${wcsserver} 'cd /wcsextracts/extracts/ADSData; ls -lrt ADS_Export_*.csv|wc -l')
+
+#RC=$(ssh wcsadm@ue00comapq02 '/wcsextracts/bin/ADSDataCheck.sh')
+
+echo " $RC files exist in the directory"
+
+if [ "${RC}" -gt "0" ]; then
+    echo "Moving  Files"
+    ssh ${user}@${wcsserver} '( tar -cvf - /wcsextracts/extracts/ADSData )' > ADSData.tar
+    tar -xvf ADSData.tar 
+    cd wcsextracts/extracts/ADSData/
+    scp ADS_Export_*.csv xpybatch@${xpayserver}:/digital-batch-data/secured/${bamboo_InputEnv}/incoming/wcs/
+    #cd ../../..
+    cd ${bamboo.build.working.directory}  
+    echo "$(pwd)"
+    echo "$(ls -lrt)"
+    rm ADSData.tar
+    rm -rf wcsextracts
+    ssh ${user}@${wcsserver} 'mv /wcsextracts/extracts/ADSData/ADS_Export_*.csv /wcsextracts/extracts/archive/ADSDataArchive/'
+    echo "Files Moved to Xpay Server & also archived in WCS "
+else 
+    echo "No Files to Move"
+fi
+
+*********************************************************Sampls Script Created to Restart Services  ************************************************************************
+
+
+
+
+if [ "${bamboo_EnvName}" = "qa1" ]; then
+      server="ue00optbaq01"
+      path="/optical-batch/opticalOMS/qa1/"
+      echo "Request to restart batch server in $server from path $path"
+
+elif [ "${bamboo_EnvName}" = "qa2" ]; then
+        server= "ue00optbaq01"
+        path= "/optical-batch/opticalOMS/qa2/"
+        echo "Request to restart batch server in $server from path $path"
+        
+elif [ "${bamboo_EnvName}" = "prod" ]; then
+        server="ue00optbap01"
+        path="/optical-batch/opticalOMS/"
+        echo "Request to restart batch server in $server from path $path"
+        
+else
+        echo "Wrong choice of Environment, write either Qa1, Qa2  or Prod"
+
+fi
+
+
+echo "Logging into the server $server"
+
+ssh optbatch@${server} "/bin/bash -s $path" << 'EOT'
+cd ${1}
+echo "Path changed to ${1} , Running the restart script"
+./optical-batch-start.sh
+
+cd /opt/app/data/logs
+
+filename=$(ls -lrt | grep "batch-server*" | tail -1 | awk '{print $NF}')
+
+echo "The Log file name is $filename"
+pwd
+sleep 30s
+echo "Waiting for 30 seconds"
+
+cat ${filename} | tail -100;
+
+echo "Please find above the top 100 logs from $filename "
+ps -ef|grep -i java
+
+EOT
+
+
+
+################################################################ E1 competency ##############################################
+
+Questions asked >> 
+
+https://www.baeldung.com/linux/pid-tid-ppid
+https://linuxgazette.net/112/krishnakumar.html#:~:text=Traditionally%2C%20a%20Unix%20process%20is,is%20a%20program%20in%20execution).
+sed '/^$/d' file.txt	delete all blank lines in the file
+
+Sometimes while editing a file you end up with a series of short lines that are difficult to scan. When you want to merge two lines into one, p
+osition the cursor anywhere on the first line, and press J to join the two lines.
+4J to join 4 consecutive lines
+
+sed '/^/ /'       ??
+
+https://www.baeldung.com/linux/sort-command
+
+
+Undoing the Previous Command
+If you make a mistake in vi or if you just change your mind after an operation is completed, you can undo your last command by pressing u immediately after the command. You do not need to press Esc after you type u . 
+
+By pressing u a second time you undo the undo.
+
+
+https://www.ibm.com/docs/en/zos/2.4.0?topic=functions-lseek-change-offset-file
+
+
+. at the end of the command - repeats it 
+
+
+What does the kill %2 command do?
+Explanation: We can use the identifiers like job number, job name or a string of arguments with kill command to terminate a job.
+ Thus kill %2 will kill the second background job.
+ 
+ https://askubuntu.com/questions/1257514/with-sed-what-is-difference-between-sed-n-1-2p3q-and-sed-n-1-2p2q
+ 
+ https://www.ibm.com/docs/en/zos/2.4.0?topic=functions-lseek-change-offset-file
+ SEEK_SET
+The start of the file
+SEEK_CUR
+The current file offset in the file
+SEEK_END
+The end of the file
+
+
+41
+
+
+In Vim, with ., I can repeat the last normal mode command; for example:
+
+dd.
+
+
+https://www.baeldung.com/linux/read-command
+
+https://phoenixnap.com/kb/linux-sed#:~:text=SED%20is%20a%20text%20stream,easy%2Dto%2Dfollow%20examples.
+
+https://www.ibm.com/docs/en/zos/2.4.0?topic=descriptions-touch-change-file-access-modification-times
+
+https://www.ibm.com/docs/en/aix/7.2?topic=redirection-displaying-program-output-copying-file-tee-command
+
+
+
+
+************************************************************************* Date command *********************************************************************************
+
+
+Ref : https://www.geeksforgeeks.org/date-command-linux-examples/
+
+
+ls -lrt  *`date +%Y%m%d --date='3 day ago'`*
+
+%D: Display date as mm/dd/yy.       
+%d: Display the day of the month (01 to 31).       
+%a: Displays the abbreviated name for weekdays (Sun to Sat).
+%A: Displays full weekdays (Sunday to Saturday).
+%h: Displays abbreviated month name (Jan to Dec).
+%b: Displays abbreviated month name (Jan to Dec).
+%B: Displays full month name(January to December).
+%m: Displays the month of year (01 to 12).
+%y: Displays last two digits of the year(00 to 99).
+%Y: Display four-digit year. 
+%T: Display the time in 24 hour format as HH:MM:SS.
+%H: Display the hour.
+%M: Display the minute.
+%S: Display the seconds.
+
+$date --date="tomorrow"  
+--date = "yesterday/2 day ago / tommorrow / 1 month ago"
+
+
